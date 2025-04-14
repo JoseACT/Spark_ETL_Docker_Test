@@ -4,7 +4,7 @@ from pyspark.sql import DataFrame
 def load_config(path="config.yaml"):
     with open(path, "r") as file:
         return yaml.safe_load(file)
-
+# TODO implement other sinks like S3, HDFS, etc.
 def load_to_postgres(df: DataFrame, config_path: str = "config.yaml"):
     config = load_config(config_path)
     db = config["postgres"]

@@ -5,3 +5,4 @@ Numpy
 sqlalchemy
 pyodbc
 fastparquet
+kafka

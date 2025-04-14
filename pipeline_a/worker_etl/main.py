@@ -23,7 +23,11 @@ spark = SparkSession.builder \
 
 
 # Pipeline with batch ID passed through
+# TODO add alerts for failed jobs
+
 df_stage_1 = extract_from_kafka(spark)
+# TODO add logging for each step
 df_clean = transform_data(df_stage_1, batch_id=batch_id)
+
 query = load_to_postgres(df_clean)
 query.awaitTermination()
