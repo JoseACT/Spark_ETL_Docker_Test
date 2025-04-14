@@ -5,7 +5,8 @@ Project to test Spark and Kafka using containers for each instance.
 
 Random Data Generator (RDG) → Kafka → Spark ETL Workers → PostgreSQL
 
-![pngaaa com-7261478](https://github.com/user-attachments/assets/a8c5a932-0fd5-4494-bf99-cc7fa330f1c1)
+![Pipeline A drawio](https://github.com/user-attachments/assets/d568d47f-d263-4779-8281-db788e53c6dc)
+
 
 
 # Infraestructure
