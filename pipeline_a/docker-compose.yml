@@ -1,0 +1,125 @@
+version: '3.9'
+
+services:
+
+  # Data Generation Service
+  random_data_generator:
+    build: ../random_data_generator
+    container_name: random_data_generator
+    depends_on:
+      - kafka
+    networks:
+      - sparknet
+
+  # Data Processing Service
+  
+  #Master
+  spark-master:
+    build: ../spark/master
+    container_name: spark-master
+    ports:
+      - "7077:7077"
+      - "8080:8080"
+    environment:
+      - SPARK_MODE=master
+    networks:
+      - sparknet
+
+  #Workers
+  worker_etl_1:
+    build: ../worker_etl
+    container_name: worker_etl_1
+    environment:
+      - PARTITION=0
+    depends_on:
+      - kafka
+      - final_storage_db
+      - spark-master
+    networks:
+      - sparknet
+
+  worker_etl_2:
+    build: ../worker_etl
+    container_name: worker_etl_2
+    environment:
+      - PARTITION=1
+    depends_on:
+      - kafka
+      - final_storage_db
+      - spark-master
+    networks:
+      - sparknet
+
+  worker_etl_3:
+    build: ../worker_etl
+    container_name: worker_etl_3
+    environment:
+      - PARTITION=2
+    depends_on:
+      - kafka
+      - final_storage_db
+      - spark-master
+    networks:
+      - sparknet
+
+  # KAKFA CONFIGURATION
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - sparknet
+  kafka:
+    image: bitnami/kafka:3.6
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_ENABLE_KRAFT=no
+    depends_on:
+      - zookeeper
+    networks:
+      - sparknet
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8085:8080"
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+    depends_on:
+      - kafka
+    networks:
+      - sparknet
+      
+  # DB CONFIGURATION
+  final_storage_db:
+    image: postgres
+    container_name: final_storage_db
+    env_file:
+      - ./final_store_db/.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - final_storage:/var/lib/postgresql/data
+      - ./final_store_db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - sparknet
+
+
+networks:
+  sparknet:
+    driver: bridge
+
+volumes:
+  final_storage:

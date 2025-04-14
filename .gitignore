@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+*.yaml
+
 # C extensions
 *.so
 
@@ -172,3 +174,7 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+
+# org files for personal use org-mode
+*.org

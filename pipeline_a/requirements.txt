@@ -1,0 +1,7 @@
+PySpark
+Pandas
+PYaml
+Numpy
+sqlalchemy
+pyodbc
+fastparquet
