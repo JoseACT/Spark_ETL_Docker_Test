@@ -13,7 +13,8 @@ names = ["Alice", "Bob", "Charlie", "Diana"]
 
 print("Starting random data generation...")
 
-sources_names = ["source1", "source2", "source3", "source4", "source5",..., "soruce100"]
+
+sources_names = [f"source{x}" for x in range(1, 101)]
 
 sources_ids_sequences = { x : 0 for x in range(1, 101) } # 100 sources
 
